@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartLibrary - Sistem Perpustakaan Digital</title>
+    <style>
+        /* --- RESET & BASE STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', System-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding: 30px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* --- GRID LAYOUT --- */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 380px 1fr;
+            }
+        }
+
+        /* --- CARD STYLES --- */
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            height: fit-content;
+        }
+
+        .card h2 {
+            margin-bottom: 25px;
+            font-size: 1.35rem;
+            color: #0f172a;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+            font-weight: 600;
+        }
+
+        /* --- FORM STYLES --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #475569;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #1e293b;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        /* --- BUTTON STYLES --- */
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 14px;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #4338ca;
+        }
+
+        /* --- TABLE STYLES --- */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* --- BADGES & ACTION BUTTONS --- */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn-status {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .btn-status:hover {
+            background-color: #d97706;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #64748b;
+            font-style: italic;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>SmartLibrary</h1>
+        <p>Sistem Manajemen Buku Berbasis LocalStorage</p>
+    </header>
+
+    <div class="main-content">
+        <div class="card">
+            <h2>Tambah Buku Baru</h2>
+            <form id="bookForm">
+                <div class="form-group">
+                    <label for="title">Judul Buku</label>
+                    <input type="text" id="title" class="form-control" required placeholder="Contoh: Laskar Pelangi">
+                </div>
+                <div class="form-group">
+                    <label for="author">Penulis</label>
+                    <input type="text" id="author" class="form-control" required placeholder="Contoh: Andrea Hirata">
+                </div>
+                <div class="form-group">
+                    <label for="year">Tahun Terbit</label>
+                    <input type="number" id="year" class="form-control" required placeholder="Contoh: 2005">
+                </div>
+                <button type="submit" class="btn">Simpan Buku</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Koleksi Buku</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Judul</th>
+                            <th>Penulis</th>
+                            <th>Tahun</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookList"></tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    Belum ada koleksi buku. Silakan tambahkan buku baru!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- JAVASCRIPT LOGIC ---
+
+    // Mengambil elemen DOM
+    const bookForm = document.getElementById('bookForm');
+    const titleInput = document.getElementById('title');
+    const authorInput = document.getElementById('author');
+    const yearInput = document.getElementById('year');
+    const bookList = document.getElementById('bookList');
+    const emptyState = document.getElementById('emptyState');
+
+    // Inisialisasi data buku dari LocalStorage
+    let books = JSON.parse(localStorage.getItem('books')) || [];
+
+    // Fungsi untuk menyimpan data ke LocalStorage
+    function saveToLocalStorage() {
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    // Fungsi untuk menampilkan daftar buku ke tabel
+    function renderBooks() {
+        bookList.innerHTML = '';
+
+        if (books.length === 0) {
+            emptyState.style.display = 'block';
+            return;
+        } else {
+            emptyState.style.display = 'none';
+        }
+
+        books.forEach((book, index) => {
+            const tr = document.createElement('tr');
+
+            // Set status badge
+            const statusBadge = book.isBorrowed 
+                ? '<span class="badge badge-danger">Dipinjam</span>' 
+                : '<span class="badge badge-success">Tersedia</span>';
+
+            // Set teks tombol status
+            const statusBtnText = book.isBorrowed ? 'Kembalikan' : 'Pinjam';
+
+            tr.innerHTML = `
+                <td><strong>${book.title}</strong></td>
+                <td>${book.author}</td>
+                <td>${book.year}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <div class="actions-cell">
+                        <button class="btn-action btn-status" onclick="toggleStatus(${index})">${statusBtnText}</button>
+                        <button class="btn-action btn-delete" onclick="deleteBook(${index})">Hapus</button>
+                    </div>
+                </td>
+            `;
+            bookList.appendChild(tr);
+        });
+    }
+
+    // Fungsi menambah buku baru
+    bookForm.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+
+        // Validasi trim untuk menghindari inputan berisi spasi kosong saja
+        if (!titleInput.value.trim() || !authorInput.value.trim() || !yearInput.value.trim()) {
+            alert('Mohon isi semua data dengan benar.');
+            return;
+        }
+
+        const newBook = {
+            title: titleInput.value.trim(),
+            author: authorInput.value.trim(),
+            year: yearInput.value,
+            isBorrowed: false 
+        };
+
+        books.push(newBook);
+        saveToLocalStorage();
+        renderBooks();
+
+        // Reset form setelah submit
+        bookForm.reset();
+    });
+
+    // Fungsi mengubah status pinjam/tersedia
+    function toggleStatus(index) {
+        books[index].isBorrowed = !books[index].isBorrowed;
+        saveToLocalStorage();
+        renderBooks();
+    }
+
+    // Fungsi menghapus buku
+    function deleteBook(index) {
+        if(confirm(`Apakah Anda yakin ingin menghapus buku "${books[index].title}"?`)) {
+            books.splice(index, 1);
+            saveToLocalStorage();
+            renderBooks();
+        }
+    }
+
+    // Render data pertama kali saat halaman dimuat
+    renderBooks();
+</script>
+
+</body>
+</html>
